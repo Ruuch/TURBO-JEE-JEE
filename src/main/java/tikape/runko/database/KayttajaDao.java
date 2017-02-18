@@ -11,20 +11,20 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import tikape.runko.domain.Opiskelija;
+import tikape.runko.domain.Kayttaja;
 
-public class OpiskelijaDao implements Dao<Opiskelija, Integer> {
+public class KayttajaDao implements Dao<Kayttaja, Integer> {
 
     private Database database;
 
-    public OpiskelijaDao(Database database) {
+    public KayttajaDao(Database database) {
         this.database = database;
     }
 
     @Override
-    public Opiskelija findOne(Integer key) throws SQLException {
+    public Kayttaja findOne(Integer key) throws SQLException {
         Connection connection = database.getConnection();
-        PreparedStatement stmt = connection.prepareStatement("SELECT * FROM Opiskelija WHERE id = ?");
+        PreparedStatement stmt = connection.prepareStatement("SELECT * FROM Kayttaja WHERE id = ?");
         stmt.setObject(1, key);
 
         ResultSet rs = stmt.executeQuery();
@@ -35,36 +35,40 @@ public class OpiskelijaDao implements Dao<Opiskelija, Integer> {
 
         Integer id = rs.getInt("id");
         String nimi = rs.getString("nimi");
+        String ekaViesti = rs.getString("ekaViesti");
+        Integer viestienMaara = rs.getInt("viestienMaara");
 
-        Opiskelija o = new Opiskelija(id, nimi);
+        Kayttaja k = new Kayttaja(id, nimi, ekaViesti, viestienMaara);
 
         rs.close();
         stmt.close();
         connection.close();
 
-        return o;
+        return k;
     }
 
     @Override
-    public List<Opiskelija> findAll() throws SQLException {
+    public List<Kayttaja> findAll() throws SQLException {
 
         Connection connection = database.getConnection();
-        PreparedStatement stmt = connection.prepareStatement("SELECT * FROM Opiskelija");
+        PreparedStatement stmt = connection.prepareStatement("SELECT * FROM Kayttaja");
 
         ResultSet rs = stmt.executeQuery();
-        List<Opiskelija> opiskelijat = new ArrayList<>();
+        List<Kayttaja> kayttajat = new ArrayList<>();
         while (rs.next()) {
             Integer id = rs.getInt("id");
             String nimi = rs.getString("nimi");
-
-            opiskelijat.add(new Opiskelija(id, nimi));
+            String ekaViesti = rs.getString("ekaViesti");
+            Integer viestienMaara = rs.getInt("viestienMaara");
+            
+            kayttajat.add(new Kayttaja(id, nimi, ekaViesti, viestienMaara));
         }
 
         rs.close();
         stmt.close();
         connection.close();
 
-        return opiskelijat;
+        return kayttajat;
     }
 
     @Override
