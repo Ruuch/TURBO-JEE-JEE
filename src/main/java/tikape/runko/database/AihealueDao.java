@@ -51,7 +51,7 @@ public class AihealueDao implements Dao<Aihealue, Integer> {
     public List<Aihealue> findAll() throws SQLException {
 
         Connection connection = database.getConnection();
-        PreparedStatement stmt = connection.prepareStatement("SELECT * FROM Keskusteluketju");
+        PreparedStatement stmt = connection.prepareStatement("SELECT * FROM Aihealue");
 
         ResultSet rs = stmt.executeQuery();
         List<Aihealue> aihealueet = new ArrayList<>();
