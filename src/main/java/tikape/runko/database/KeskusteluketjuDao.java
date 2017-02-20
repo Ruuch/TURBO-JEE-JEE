@@ -58,7 +58,7 @@ public class KeskusteluketjuDao implements Dao<Keskusteluketju, Integer> {
         List<Keskusteluketju> keskusteluketjut = new ArrayList<>();
         while (rs.next()) {
             Integer id = rs.getInt("id");
-            Integer aihealueId = rs.getInt("aihealueId");
+            Integer aihealueId = rs.getInt("aihealue_id");
             Integer viestienMaara = rs.getInt("viestienMaara");
             String otsikko = rs.getString("otsikko");
             String aikaleima = rs.getString("aikaleima");
@@ -71,6 +71,33 @@ public class KeskusteluketjuDao implements Dao<Keskusteluketju, Integer> {
         connection.close();
 
         return keskusteluketjut;
+    }
+    
+    public List<Keskusteluketju> alueenKetjut(Integer aihealueId) throws SQLException {
+        
+        Connection connection = database.getConnection();
+        PreparedStatement stmt = connection.prepareStatement("SELECT * FROM Keskusteluketju WHERE aihealue_id = ?");
+        stmt.setObject(1, aihealueId);
+
+        ResultSet rs = stmt.executeQuery();
+        List<Keskusteluketju> lista = new ArrayList<>();
+        
+        while (rs.next()) {
+            Integer id = rs.getInt("id");
+            Integer aihealue_id = rs.getInt("aihealue_id");
+            Integer viestienMaara = rs.getInt("viestienMaara");
+            String otsikko = rs.getString("otsikko");
+            String aikaleima = rs.getString("aikaleima");
+            
+            lista.add(new Keskusteluketju(id, aihealue_id, viestienMaara, otsikko, aikaleima));
+        }
+
+        rs.close();
+        stmt.close();
+        connection.close();
+
+        return lista;
+        
     }
 
     @Override
