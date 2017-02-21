@@ -15,7 +15,7 @@ public class Main {
 //        database.init();
 
         ViestiDao viestiDao = new ViestiDao(database);
-        KeskusteluketjuDao keskusteluketjuDao = new KeskusteluketjuDao(database);
+             KeskusteluketjuDao keskusteluketjuDao = new KeskusteluketjuDao(database);
 
         get("/", (req, res) -> {
             HashMap map = new HashMap<>();
@@ -24,14 +24,14 @@ public class Main {
             return new ModelAndView(map, "index");
         }, new ThymeleafTemplateEngine());
 
-        get("/opiskelijat", (req, res) -> {
+        get("/keskusteluketjut", (req, res) -> {
             HashMap map = new HashMap<>();
-            map.put("opiskelijat", keskusteluketjuDao.findAll());
+            map.put("keskusteluketjut", keskusteluketjuDao.findAll());
 
-            return new ModelAndView(map, "opiskelijat");
+            return new ModelAndView(map, "keskusteluketjut");
         }, new ThymeleafTemplateEngine());
 
-        get("/opiskelijat/:id", (req, res) -> {
+        get("/keskusteluketjut/:id", (req, res) -> {
             HashMap map = new HashMap<>();
             map.put("opiskelija", viestiDao.findOne(Integer.parseInt(req.params("id"))));
 
