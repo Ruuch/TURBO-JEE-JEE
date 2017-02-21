@@ -11,8 +11,8 @@
         <table>
         <tr><td>otsikko</td><td>viestien maara</td></tr>
         
-        <tr th:each="viesti: ${lista}">
-                <td th:text="${viesti.otsikko}">1</td><td th:text="${viesti.viestienMaara}">1</td>
+        <tr th:each="ketju: ${lista}">
+                <td th:text="${ketju.otsikko}">1</td><td th:text="${ketju.viestienMaara}">1</td>
         </tr>
         
         
