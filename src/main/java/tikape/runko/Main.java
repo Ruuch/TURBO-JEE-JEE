@@ -17,7 +17,9 @@ public class Main {
 //        database.init();
 
         ViestiDao viestiDao = new ViestiDao(database);
-             KeskusteluketjuDao keskusteluketjuDao = new KeskusteluketjuDao(database);
+        KeskusteluketjuDao keskusteluketjuDao = new KeskusteluketjuDao(database);
+        AihealueDao aihealueDao = new AihealueDao(database);
+        
 
         get("/", (req, res) -> {
             HashMap map = new HashMap<>();
@@ -46,10 +48,10 @@ public class Main {
             HashMap map = new HashMap<>();
             
             Integer id = Integer.parseInt(req.queryParams("ID"));
-            Aihealue alue = aihedao.findOne(id);
+            Aihealue alue = aihealueDao.findOne(id);
             
             map.put("otsikko",alue.getAihe());
-            map.put("lista",ketjudao.alueenKetjut(id));
+            map.put("lista",keskusteluketjuDao.alueenKetjut(id));
             
             return new ModelAndView(map, "alueen_ketjut");
         }, new ThymeleafTemplateEngine());
@@ -58,7 +60,7 @@ public class Main {
         get("/testi", (req,res) -> {
             HashMap map = new HashMap<>();
             map.put("Viesti", "heipähei");
-            map.put("lista",viestidao.findAll());
+            map.put("lista",viestiDao.findAll());
             
             return new ModelAndView(map,"testi");
         }, new ThymeleafTemplateEngine());
