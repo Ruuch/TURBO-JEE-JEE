@@ -7,6 +7,8 @@ import spark.template.thymeleaf.ThymeleafTemplateEngine;
 import tikape.runko.database.Database;
 import tikape.runko.database.KeskusteluketjuDao;
 import tikape.runko.database.ViestiDao;
+import tikape.runko.database.AihealueDao;
+import tikape.runko.domain.Aihealue;
 
 public class Main {
 
@@ -37,5 +39,29 @@ public class Main {
 
             return new ModelAndView(map, "opiskelija");
         }, new ThymeleafTemplateEngine());
+        
+        //  Tulostetaan osoitteesta /alue?ID=i kaikki kyseisien id:n alueen
+        //  ketjut.
+        get("/alue", (req,res) -> {
+            HashMap map = new HashMap<>();
+            
+            Integer id = Integer.parseInt(req.queryParams("ID"));
+            Aihealue alue = aihedao.findOne(id);
+            
+            map.put("otsikko",alue.getAihe());
+            map.put("lista",ketjudao.alueenKetjut(id));
+            
+            return new ModelAndView(map, "alueen_ketjut");
+        }, new ThymeleafTemplateEngine());
+
+        //  Tulostaa kaikki viestit tietokannasta.
+        get("/testi", (req,res) -> {
+            HashMap map = new HashMap<>();
+            map.put("Viesti", "heipähei");
+            map.put("lista",viestidao.findAll());
+            
+            return new ModelAndView(map,"testi");
+        }, new ThymeleafTemplateEngine());
     }
 }
+
