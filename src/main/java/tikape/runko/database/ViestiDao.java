@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import tikape.runko.domain.Keskusteluketju;
 import tikape.runko.domain.Viesti;
 
 public class ViestiDao implements Dao<Viesti, Integer> {
@@ -76,4 +77,29 @@ public class ViestiDao implements Dao<Viesti, Integer> {
         // ei toteutettu
     }
 
+    public List<Viesti> ketjunViestit(Integer ketju_id) throws SQLException {
+
+        Connection connection = database.getConnection();
+        PreparedStatement stmt = connection.prepareStatement("SELECT * FROM Viesti WHERE ketjuId = ?");
+        stmt.setObject(1, ketju_id);
+
+        ResultSet rs = stmt.executeQuery();
+        List<Viesti> lista = new ArrayList<>();
+
+        while (rs.next()) {
+            Integer id = rs.getInt("id");
+            Integer ketjuId = rs.getInt("ketjuId");
+            String aikaleima = rs.getString("aikaleima");
+            String sisalto = rs.getString("sisalto");
+
+            lista.add(new Viesti(id, ketjuId, aikaleima, sisalto));
+        }
+
+        rs.close();
+        stmt.close();
+        connection.close();
+
+        return lista;
+
+    }
 }

@@ -9,6 +9,7 @@ import tikape.runko.database.KeskusteluketjuDao;
 import tikape.runko.database.ViestiDao;
 import tikape.runko.database.AihealueDao;
 import tikape.runko.domain.Aihealue;
+import tikape.runko.domain.Keskusteluketju;
 
 public class Main {
 
@@ -19,7 +20,6 @@ public class Main {
         ViestiDao viestiDao = new ViestiDao(database);
         KeskusteluketjuDao keskusteluketjuDao = new KeskusteluketjuDao(database);
         AihealueDao aihealueDao = new AihealueDao(database);
-        
 
         get("/", (req, res) -> {
             HashMap map = new HashMap<>();
@@ -41,29 +41,27 @@ public class Main {
 
             return new ModelAndView(map, "opiskelija");
         }, new ThymeleafTemplateEngine());
-        
+
         //  Tulostetaan osoitteesta /alue?ID=i kaikki kyseisien id:n alueen
         //  ketjut.
-        get("/alue", (req,res) -> {
+        get("/alueen_ketjut/:id", (req, res) -> {
             HashMap map = new HashMap<>();
-            
-            Integer id = Integer.parseInt(req.queryParams("ID"));
-            Aihealue alue = aihealueDao.findOne(id);
-            
-            map.put("otsikko",alue.getAihe());
-            map.put("lista",keskusteluketjuDao.alueenKetjut(id));
-            
+            Aihealue alue = aihealueDao.findOne(Integer.parseInt(req.params("id")));
+
+            map.put("otsikko", alue.getAihe());
+            map.put("lista", keskusteluketjuDao.alueenKetjut(alue.getId()));
+
             return new ModelAndView(map, "alueen_ketjut");
         }, new ThymeleafTemplateEngine());
 
-        //  Tulostaa kaikki viestit tietokannasta.
-        get("/testi", (req,res) -> {
+        //  Tulostaa kaikki tietyn ketjun viestit tietokannasta.
+        get("/viestit/:id", (req, res) -> {
             HashMap map = new HashMap<>();
+            Keskusteluketju kk = keskusteluketjuDao.findOne(Integer.parseInt(req.params("id")));
             map.put("Viesti", "heipähei");
-            map.put("lista",viestiDao.findAll());
-            
-            return new ModelAndView(map,"testi");
+            map.put("lista", viestiDao.ketjunViestit(kk.getId()));
+
+            return new ModelAndView(map, "viestit");
         }, new ThymeleafTemplateEngine());
     }
 }
-

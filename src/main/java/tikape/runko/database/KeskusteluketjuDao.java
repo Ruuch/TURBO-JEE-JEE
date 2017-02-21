@@ -34,7 +34,7 @@ public class KeskusteluketjuDao implements Dao<Keskusteluketju, Integer> {
         }
 
         Integer id = rs.getInt("id");
-        Integer aihealueId = rs.getInt("aihealueId");
+        Integer aihealueId = rs.getInt("aihealue_id");
         Integer viestienMaara = rs.getInt("viestienMaara");
         String otsikko = rs.getString("otsikko");
         String aikaleima = rs.getString("aikaleima");
