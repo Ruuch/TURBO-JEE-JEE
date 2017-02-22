@@ -1,0 +1,24 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+        <title>Otsikko</title>
+        <meta charset="utf-8" />
+    </head>
+
+    <body>
+        <h1>Hei keskusteluketjut!</h1>
+
+        <ol>
+            <li th:each="alue: ${alueet}">
+                <span th:text="${alue.aihe}">ketjun nimi</span> <a th:href="${'/alueen_ketjut/' + alue.id}">keskusteluun</a>
+            </li>
+        </ol>
+        
+        <form method="POST" action="/">
+            otsikko:<br/>
+            <input type="text" name="aihe"/><br/>
+            <input type="submit" value="lisaa alue"/>
+        </form>
+    </body>
+</html>
