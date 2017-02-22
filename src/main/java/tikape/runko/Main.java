@@ -21,13 +21,29 @@ public class Main {
         KeskusteluketjuDao keskusteluketjuDao = new KeskusteluketjuDao(database);
         AihealueDao aihealueDao = new AihealueDao(database);
 
+        // Listaa kaikki keskustelualueet, sisältää linkit /alueen_ketjut/:id
         get("/", (req, res) -> {
             HashMap map = new HashMap<>();
-            map.put("viesti", "tervehdys");
+            map.put("otsikko", "Alueet");
+            map.put("alueet",aihealueDao.findAll());
 
-            return new ModelAndView(map, "index");
+            return new ModelAndView(map, "alueet");
         }, new ThymeleafTemplateEngine());
-
+        
+        //  ottaa vastaan sivulta etusivulta annettavan luotavan keskustelualueen
+        //  nimen ja luo uuden alueen. Tämän jälkeen palauttaa etusivun uusilla alueilla.
+        post("/", (req, res) -> {
+            String otsikko = req.queryParams("aihe");
+            aihealueDao.add(otsikko);
+            
+            HashMap map = new HashMap<>();
+            map.put("otsikko", "Alueet");
+            map.put("alueet",aihealueDao.findAll());
+            
+            return new ModelAndView(map, "alueet");
+        }, new ThymeleafTemplateEngine());
+        
+        //  Listaa kaikki ketjut, sivu sisältää linkit /keskusteluketjut/:id
         get("/keskusteluketjut", (req, res) -> {
             HashMap map = new HashMap<>();
             map.put("keskusteluketjut", keskusteluketjuDao.findAll());
@@ -35,6 +51,7 @@ public class Main {
             return new ModelAndView(map, "keskusteluketjut");
         }, new ThymeleafTemplateEngine());
 
+        //  Kesken?
         get("/keskusteluketjut/:id", (req, res) -> {
             HashMap map = new HashMap<>();
             map.put("opiskelija", viestiDao.findOne(Integer.parseInt(req.params("id"))));
