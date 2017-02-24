@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import tikape.runko.domain.Aihealue;
@@ -79,20 +80,39 @@ public class AihealueDao implements Dao<Aihealue, Integer> {
     }
     
     //  Lisää uuden esiintymän tauluun parametrein (id,aihe,0,0)
-    public void add(String otsikko) throws SQLException {
+    public void save(String otsikko) throws SQLException {
+        //  Alustetaan id.
+        int id = 0;
         
-        //  Koodi joka käy läpi kaikki aihealueet ja valitsee pienimmän id:n 
-        //  joka ei ole käytössä
-        Integer id = 0;
+        //  Käydään läpi kaikki Aihealue oliot ja valitaan suurin id.
+        //  Tämän voi muuttaa niin että valitsee ensinmäisen vaapana olevan id:n
+        for (Aihealue alue : findAll()) {
+            if (alue.getId() > id) {
+                id = alue.getId();
+            }
+        }
+        //  Lisätään tähän 1.
+        id++;
+        
+        
+        //vaihda nimeksi save, muuta tyyli samanlaiseksi kuin keskusteluketjuDaossa
         
         try (Connection connection = database.getConnection()) {
             Statement st = connection.createStatement();
+            LocalDateTime timePoint = LocalDateTime.now();
             
-            String stat = "INSERT INTO Aihealue (id,aihe,viestejaYhteensa, viimeViestinAikaleima)"
-                    + " VALUES (" + id + ",'" + otsikko + "',0,'now')";
-            st.executeUpdate(stat);
-            
+            PreparedStatement stmt = connection.prepareStatement("INSERT INTO Aihealue "
+                    + "(id,aihe,viestejaYhteensa, viimeViestinAikaleima)"
+                    + " VALUES ( ? , ? , 0, ?)");
 
+            stmt.setObject(1, id);
+            stmt.setObject(2, otsikko);
+            stmt.setObject(3, timePoint);
+            
+            stmt.executeUpdate(); 
+            stmt.close();
+            st.close();
+           
         } catch (Throwable t) {
             System.out.println("Error >> " + t.getMessage());
         }
