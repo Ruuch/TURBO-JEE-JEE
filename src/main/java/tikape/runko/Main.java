@@ -70,7 +70,9 @@ public class Main {
 
             map.put("otsikko", alue.getAihe());
             map.put("lista", keskusteluketjuDao.alueenKetjut(alue.getId()));
-
+            for (Keskusteluketju k : keskusteluketjuDao.alueenKetjut(alue.getId())) {
+                System.out.println(k.getId());
+            }
             return new ModelAndView(map, "alueen_ketjut");
         }, new ThymeleafTemplateEngine());
 

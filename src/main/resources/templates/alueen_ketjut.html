@@ -12,12 +12,12 @@
             <tr><td>otsikko</td><td>viestien maara</td></tr>
 
             <tr th:each="ketju: ${lista}">
-                <td th:text="${ketju.otsikko}">1</td><td th:text="${ketju.viestienMaara}">1</td>
+                <td th:text="${ketju.otsikko}">1</td>
+                <td th:text="${ketju.viestienMaara}">1</td>
             </tr>
-
-
         </table>
 
+        <br></br>
         <form method="POST">
             Otsikko:<br></br>
             <input type="text" name="otsikko" /><br></br>

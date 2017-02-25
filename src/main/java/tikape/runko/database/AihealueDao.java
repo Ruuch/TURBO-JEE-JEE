@@ -78,12 +78,12 @@ public class AihealueDao implements Dao<Aihealue, Integer> {
     public void delete(Integer key) throws SQLException {
         // ei toteutettu
     }
-    
+
     //  Lisää uuden esiintymän tauluun parametrein (id,aihe,0,0)
     public void save(String otsikko) throws SQLException {
         //  Alustetaan id.
         int id = 0;
-        
+
         //  Käydään läpi kaikki Aihealue oliot ja valitaan suurin id.
         //  Tämän voi muuttaa niin että valitsee ensinmäisen vaapana olevan id:n
         for (Aihealue alue : findAll()) {
@@ -93,14 +93,12 @@ public class AihealueDao implements Dao<Aihealue, Integer> {
         }
         //  Lisätään tähän 1.
         id++;
-        
-        
+
         //vaihda nimeksi save, muuta tyyli samanlaiseksi kuin keskusteluketjuDaossa
-        
         try (Connection connection = database.getConnection()) {
             Statement st = connection.createStatement();
             LocalDateTime timePoint = LocalDateTime.now();
-            
+
             PreparedStatement stmt = connection.prepareStatement("INSERT INTO Aihealue "
                     + "(id,aihe,viestejaYhteensa, viimeViestinAikaleima)"
                     + " VALUES ( ? , ? , 0, ?)");
@@ -108,15 +106,36 @@ public class AihealueDao implements Dao<Aihealue, Integer> {
             stmt.setObject(1, id);
             stmt.setObject(2, otsikko);
             stmt.setObject(3, timePoint);
-            
-            stmt.executeUpdate(); 
+
+            stmt.executeUpdate();
             stmt.close();
             st.close();
-           
+
         } catch (Throwable t) {
             System.out.println("Error >> " + t.getMessage());
         }
-        
+
     }
 
+    public Integer generateId() throws SQLException {
+        Connection connection = database.getConnection();
+        PreparedStatement stmt = connection.prepareStatement("SELECT * FROM Aihealue ORDER BY id DESC LIMIT 1");
+        ResultSet rs = stmt.executeQuery();
+        if (rs.next()) {
+            return null;
+        }
+        Integer id = rs.getInt("id");
+        String aihe = rs.getString("aihe");
+        Integer viestejaYhteensa = rs.getInt("viestejaYhteensa");
+        String viimeViestinAikaleima = rs.getString("viimeViestinAikaleima");
+
+        Aihealue a = new Aihealue(id, aihe, viestejaYhteensa, viimeViestinAikaleima);
+        int newId = a.getId() + 1;
+
+        rs.close();
+        stmt.close();
+        connection.close();
+
+        return newId;
+    }
 }

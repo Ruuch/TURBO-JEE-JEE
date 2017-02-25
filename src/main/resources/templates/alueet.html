@@ -11,7 +11,7 @@
 
         <ol>
             <li th:each="alue: ${alueet}">
-                <span th:text="${alue.aihe}">ketjun nimi</span> <a th:href="${'/alueen_ketjut/' + alue.id}">keskusteluun</a>
+                <span th:text="${alue.aihe}">ketjun nimi</span> <a th:href="${'/alueen_ketjut/' + alue.id}">keskustelualueelle</a>
             </li>
         </ol>
         

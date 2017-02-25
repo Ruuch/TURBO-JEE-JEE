@@ -102,4 +102,26 @@ public class ViestiDao implements Dao<Viesti, Integer> {
         return lista;
 
     }
+
+    public Integer generateId() throws SQLException {
+        Connection connection = database.getConnection();
+        PreparedStatement stmt = connection.prepareStatement("SELECT * FROM Viesti ORDER BY id DESC LIMIT 1");
+        ResultSet rs = stmt.executeQuery();
+        if (rs.next()) {
+            return null;
+        }
+        Integer id = rs.getInt("id");
+        Integer ketjuId = rs.getInt("ketjuId");
+        String aikaleima = rs.getString("aikaleima");
+        String sisalto = rs.getString("sisalto");
+
+        Viesti v = new Viesti(id, ketjuId, aikaleima, sisalto);
+        int newId = v.getId() + 1;
+
+        rs.close();
+        stmt.close();
+        connection.close();
+
+        return newId;
+    }
 }
