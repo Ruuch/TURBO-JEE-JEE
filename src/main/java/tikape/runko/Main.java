@@ -70,15 +70,13 @@ public class Main {
 
             map.put("otsikko", alue.getAihe());
             map.put("lista", keskusteluketjuDao.alueenKetjut(alue.getId()));
-            for (Keskusteluketju k : keskusteluketjuDao.alueenKetjut(alue.getId())) {
-                System.out.println(k.getId());
-            }
+
             return new ModelAndView(map, "alueen_ketjut");
         }, new ThymeleafTemplateEngine());
 
         //lisää uuden keskusteluketjun, viestin lisääminen ei vielä tehty
         Spark.post("/alueen_ketjut/:id", (req, res) -> {
-            keskusteluketjuDao.save(keskusteluketjuDao.generateId(), Integer.parseInt(req.params(":id")),
+            keskusteluketjuDao.save(Integer.parseInt(req.params(":id")),
                     req.queryParams("otsikko"));
 
             res.redirect("/alueen_ketjut/" + req.params(":id"));
@@ -94,5 +92,13 @@ public class Main {
 
             return new ModelAndView(map, "viestit");
         }, new ThymeleafTemplateEngine());
+
+        //lisää uuden viestin, ketjun id:n mukaiseen sijaintiin
+        Spark.post("/viestit/:id", (req, res) -> {
+            viestiDao.save(Integer.parseInt(req.params(":id")), req.queryParams("viesti"));
+
+            res.redirect("/viestit/" + req.params(":id"));
+            return "ok";
+        });
     }
 }

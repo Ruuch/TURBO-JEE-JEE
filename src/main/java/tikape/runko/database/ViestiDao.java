@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import tikape.runko.domain.Keskusteluketju;
@@ -107,7 +108,7 @@ public class ViestiDao implements Dao<Viesti, Integer> {
         Connection connection = database.getConnection();
         PreparedStatement stmt = connection.prepareStatement("SELECT * FROM Viesti ORDER BY id DESC LIMIT 1");
         ResultSet rs = stmt.executeQuery();
-        if (rs.next()) {
+        if (!rs.next()) {
             return null;
         }
         Integer id = rs.getInt("id");
@@ -123,5 +124,18 @@ public class ViestiDao implements Dao<Viesti, Integer> {
         connection.close();
 
         return newId;
+    }
+
+    public void save(Integer ketjuId, String sisalto) throws SQLException {
+        LocalDateTime timePoint = LocalDateTime.now();
+        Connection connection = database.getConnection();
+        PreparedStatement stmt = connection.prepareStatement("INSERT INTO Viesti (id, ketjuId, aikaleima, sisalto) VALUES (?, ?, ?, ?);");
+        stmt.setObject(1, generateId());
+        stmt.setObject(2, ketjuId);
+        stmt.setObject(3, timePoint.toString());
+        stmt.setObject(4, sisalto);
+        stmt.executeUpdate();
+        stmt.close();
+        connection.close();
     }
 }
