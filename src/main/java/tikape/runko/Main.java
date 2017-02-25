@@ -2,6 +2,7 @@ package tikape.runko;
 
 import java.util.HashMap;
 import spark.ModelAndView;
+import spark.Spark;
 import static spark.Spark.*;
 import spark.template.thymeleaf.ThymeleafTemplateEngine;
 import tikape.runko.database.Database;
@@ -25,24 +26,24 @@ public class Main {
         get("/", (req, res) -> {
             HashMap map = new HashMap<>();
             map.put("otsikko", "Alueet");
-            map.put("alueet",aihealueDao.findAll());
+            map.put("alueet", aihealueDao.findAll());
 
             return new ModelAndView(map, "alueet");
         }, new ThymeleafTemplateEngine());
-        
+
         //  ottaa vastaan sivulta etusivulta annettavan luotavan keskustelualueen
         //  nimen ja luo uuden alueen. Tämän jälkeen palauttaa etusivun uusilla alueilla.
         post("/", (req, res) -> {
             String otsikko = req.queryParams("aihe");
             aihealueDao.save(otsikko);
-            
+
             HashMap map = new HashMap<>();
             map.put("otsikko", "Alueet");
-            map.put("alueet",aihealueDao.findAll());
-            
+            map.put("alueet", aihealueDao.findAll());
+
             return new ModelAndView(map, "alueet");
         }, new ThymeleafTemplateEngine());
-        
+
         //  Listaa kaikki ketjut, sivu sisältää linkit /keskusteluketjut/:id
         get("/keskusteluketjut", (req, res) -> {
             HashMap map = new HashMap<>();
@@ -51,6 +52,8 @@ public class Main {
             return new ModelAndView(map, "keskusteluketjut");
         }, new ThymeleafTemplateEngine());
 
+        // Tämän oli alunperin tarkoitus hoitaa samaa asiaa kuin alueen_ketjut, 
+        // päällekkäisyys siis alunperin
         //  Kesken?
         get("/keskusteluketjut/:id", (req, res) -> {
             HashMap map = new HashMap<>();
@@ -70,6 +73,15 @@ public class Main {
 
             return new ModelAndView(map, "alueen_ketjut");
         }, new ThymeleafTemplateEngine());
+
+        //lisää uuden keskusteluketjun, viestin lisääminen ei vielä tehty
+        Spark.post("/alueen_ketjut/:id", (req, res) -> {
+            keskusteluketjuDao.save(keskusteluketjuDao.generateId(), Integer.parseInt(req.params(":id")),
+                    req.queryParams("otsikko"));
+
+            res.redirect("/alueen_ketjut/" + req.params(":id"));
+            return "ok";
+        });
 
         //  Tulostaa kaikki tietyn ketjun viestit tietokannasta.
         get("/viestit/:id", (req, res) -> {

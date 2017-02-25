@@ -120,4 +120,30 @@ public class KeskusteluketjuDao implements Dao<Keskusteluketju, Integer> {
         connection.close();
     }
 
+    public Integer generateId() throws SQLException {
+        Connection connection = database.getConnection();
+        PreparedStatement stmt = connection.prepareStatement("SELECT * FROM Keskusteluketju ORDER BY id DESC LIMIT 1");
+
+        ResultSet rs = stmt.executeQuery();
+        boolean hasOne = rs.next();
+        if (!hasOne) {
+            return null;
+        }
+
+        Integer id = rs.getInt("id");
+        Integer aihealueId = rs.getInt("aihealue_id");
+        Integer viestienMaara = rs.getInt("viestienMaara");
+        String otsikko = rs.getString("otsikko");
+        String aikaleima = rs.getString("aikaleima");
+
+        Keskusteluketju k = new Keskusteluketju(id, aihealueId, viestienMaara, otsikko, aikaleima);
+        int newId = k.getId() + 1;
+
+        rs.close();
+        stmt.close();
+        connection.close();
+
+        return newId;
+    }
+
 }

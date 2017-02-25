@@ -9,14 +9,22 @@
     <body>
         <h3 th:text="${otsikko}"></h3>
         <table>
-        <tr><td>otsikko</td><td>viestien maara</td></tr>
-        
-        <tr th:each="ketju: ${lista}">
+            <tr><td>otsikko</td><td>viestien maara</td></tr>
+
+            <tr th:each="ketju: ${lista}">
                 <td th:text="${ketju.otsikko}">1</td><td th:text="${ketju.viestienMaara}">1</td>
-        </tr>
-        
-        
+            </tr>
+
+
         </table>
+
+        <form method="POST">
+            Otsikko:<br></br>
+            <input type="text" name="otsikko" /><br></br>
+            Viesti:<br></br>
+            <textarea name="text" id="textarea" cols="45" rows="5"></textarea>
+            <input type="submit" name="button" value="Send" />
+        </form>
 
     </body>
 </html>
