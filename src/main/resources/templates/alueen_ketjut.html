@@ -18,13 +18,12 @@
     <body>
         <h3 th:text="${otsikko}"></h3>
         <table>
-            <tr><td align="center" valign="center"><strong>otsikko</strong></td><td align="center" valign="center"><strong>viestien maara</strong></td><td></td></tr>
+            <tr><td align="center" valign="center"><strong>Otsikko</strong></td><td align="center" valign="center"><strong>Viestien maara</strong></td><td align="center" valign="center"><strong>Viimeisin viesti</strong></td></tr>
 
             <tr th:each="ketju: ${lista}">
-                <td th:text="${ketju.otsikko}">1</td>
+                <td><a th:href="${'/viestit/' + ketju.id}"> <span th:text="${ketju.otsikko}"></span></a></td>
                 <td th:text="${ketju.viestienMaara}">1</td>
-                <td><a th:href="${'/viestit/' + ketju.id}">ketjuun</a></td>
-
+                <!--<td th:text="${ketju.viimeViestinAikaleima}">1</td>-->
             </tr>
         </table>
 
