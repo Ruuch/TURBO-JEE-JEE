@@ -3,8 +3,11 @@ package tikape.runko;
 //import java.util.Calendar;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import spark.ModelAndView;
 import spark.Spark;
 import static spark.Spark.*;
@@ -67,13 +70,24 @@ public class Main {
         }, new ThymeleafTemplateEngine());
 
         //  Tulostetaan osoitteesta /alue?ID=i kaikki kyseisien id:n alueen
-        //  ketjut.
+        //  ketjut. 
+        // Viimeisimpien viestien aikaleimat voidaan lähettää tätä kautta jos 
+        // ei lisätä tietokantaan uutta saraketta.
         get("/alueen_ketjut/:id", (req, res) -> {
             HashMap map = new HashMap<>();
             Aihealue alue = aihealueDao.findOne(Integer.parseInt(req.params("id")));
-
+            List<Keskusteluketju> keskusteluketjut = keskusteluketjuDao.alueenKetjut(alue.getId());
             map.put("otsikko", alue.getAihe());
-            map.put("lista", keskusteluketjuDao.alueenKetjut(alue.getId()));
+            map.put("lista", keskusteluketjut);
+//            List<String> aikaleimat = new ArrayList<>();
+//            for (Keskusteluketju kk : keskusteluketjut) {
+//                String aikaleima = keskusteluketjuDao.getViimeisimmanViestinAikaleima(kk.getId());
+//                if (aikaleima == null) {
+//                    aikaleimat.add("Ei viestejä");
+//                }
+//                aikaleimat.add(aikaleima);
+//            }
+//            map.put("aikaleimat", aikaleimat);
 
             return new ModelAndView(map, "alueen_ketjut");
         }, new ThymeleafTemplateEngine());

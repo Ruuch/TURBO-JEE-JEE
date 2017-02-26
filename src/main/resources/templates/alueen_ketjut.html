@@ -9,12 +9,12 @@
     <body>
         <h3 th:text="${otsikko}"></h3>
         <table>
-            <tr><td>otsikko</td><td>viestien maara</td><td></td></tr>
+            <tr><td><strong>Otsikko</strong></td><td><strong>Viestien maara</strong></td><td><strong>Viimeisin viesti</strong></td></tr>
 
             <tr th:each="ketju: ${lista}">
-                <td th:text="${ketju.otsikko}">1</td>
-                <td th:text="${ketju.viestienMaara}">1</td>
-                <td><a th:href="${'/viestit/' + ketju.id}">ketjuun</a></td>
+                <td><a th:href="${'/viestit/' + ketju.id}"> <span th:text="${ketju.otsikko}"></span></a></td>
+                <td th:text="${ketju.viestienMaara}"></td>
+                <!--<td th:text="${ketju.viimeViestinAikaleima"></td>-->
 
             </tr>
         </table>

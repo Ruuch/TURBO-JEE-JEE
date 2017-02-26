@@ -108,7 +108,7 @@ public class KeskusteluketjuDao implements Dao<Keskusteluketju, Integer> {
     }
 
     public void save(Integer ketjuId, Integer aihealue_id, String otsikko) throws SQLException {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         Date date = new Date();
         String sDate = sdf.format(date);
         Connection connection = database.getConnection();
@@ -157,4 +157,19 @@ public class KeskusteluketjuDao implements Dao<Keskusteluketju, Integer> {
         connection.close();
     }
 
+    public String getViimeisimmanViestinAikaleima(int ketjuId) throws SQLException {
+        Connection connection = database.getConnection();
+        PreparedStatement stmt = connection.prepareStatement("SELECT * FROM Viesti WHERE ketjuId = ? ORDER BY aikaleima DESC;");
+        stmt.setObject(1, ketjuId);
+        ResultSet rs = stmt.executeQuery();
+        boolean hasOne = rs.next();
+        if (!hasOne) {
+            return null;
+        }
+        String aikaleima = rs.getString("aikaleima");
+        rs.close();
+        stmt.close();
+        connection.close();
+        return aikaleima;
+    }
 }
