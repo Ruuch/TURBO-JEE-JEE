@@ -107,11 +107,11 @@ public class KeskusteluketjuDao implements Dao<Keskusteluketju, Integer> {
         // ei toteutettu
     }
 
-    public void save(Integer aihealue_id, String otsikko) throws SQLException {
+    public void save(Integer ketjuId, Integer aihealue_id, String otsikko) throws SQLException {
         LocalDateTime timePoint = LocalDateTime.now();
         Connection connection = database.getConnection();
         PreparedStatement stmt = connection.prepareStatement("INSERT INTO Keskusteluketju (id, aihealue_id, viestienMaara, otsikko, aikaleima) VALUES (?, ?," + "0," + "?,?);");
-        stmt.setObject(1, generateId());
+        stmt.setObject(1, ketjuId);
         stmt.setObject(2, aihealue_id);
         stmt.setObject(3, otsikko);
         stmt.setObject(4, timePoint.toString());

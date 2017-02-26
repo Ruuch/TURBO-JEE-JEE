@@ -15,7 +15,7 @@
                 <td th:text="${ketju.otsikko}">1</td>
                 <td th:text="${ketju.viestienMaara}">1</td>
                 <td><a th:href="${'/viestit/' + ketju.id}">ketjuun</a></td>
-                
+
             </tr>
         </table>
 
@@ -24,7 +24,7 @@
             Otsikko:<br></br>
             <input type="text" name="otsikko" /><br></br>
             Viesti:<br></br>
-            <textarea name="text" id="textarea" cols="45" rows="5"></textarea>
+            <textarea name="viesti" id="textarea" cols="45" rows="5"></textarea>
             <input type="submit" name="button" value="Send" />
         </form>
 

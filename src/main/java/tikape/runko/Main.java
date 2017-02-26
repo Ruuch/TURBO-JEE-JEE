@@ -76,9 +76,10 @@ public class Main {
 
         //lisää uuden keskusteluketjun, viestin lisääminen ei vielä tehty
         Spark.post("/alueen_ketjut/:id", (req, res) -> {
-            keskusteluketjuDao.save(Integer.parseInt(req.params(":id")),
+            int id = keskusteluketjuDao.generateId();
+            keskusteluketjuDao.save(id, Integer.parseInt(req.params(":id")),
                     req.queryParams("otsikko"));
-
+            viestiDao.save(id, req.queryParams("viesti"));
             res.redirect("/alueen_ketjut/" + req.params(":id"));
             return "ok";
         });
