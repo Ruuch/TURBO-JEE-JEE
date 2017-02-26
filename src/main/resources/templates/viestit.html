@@ -2,6 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
     <head>
+        <style>
+            body {
+                background-color: lightblue;
+            }
+            
+        </style>
         <title>Otsikko</title>
         <meta charset="utf-8" />
     </head>
@@ -9,7 +15,7 @@
     <body>
         <h3 th:text="${otsikko}"></h3>
         <table>
-            <tr><td>lähettäjä</td><td>viesti</td></tr>
+            <tr><td><strong>lähettäjä</strong></td><td><strong>viesti</strong></td></tr>
 
             <tr th:each="viesti: ${lista}">
                 <td th:text="${viesti.id}">1</td><td th:text="${viesti.sisalto}">1</td>
