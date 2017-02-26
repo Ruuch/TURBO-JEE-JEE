@@ -9,7 +9,7 @@
     <body>
         <h3 th:text="${otsikko}"></h3>
         <table>
-            <tr><td>otsikko</td><td>viestien maara</td></tr>
+            <tr><td>otsikko</td><td>viestien maara</td><td></td></tr>
 
             <tr th:each="ketju: ${lista}">
                 <td th:text="${ketju.otsikko}">1</td>
