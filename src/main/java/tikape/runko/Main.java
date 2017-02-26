@@ -80,6 +80,7 @@ public class Main {
             keskusteluketjuDao.save(id, Integer.parseInt(req.params(":id")),
                     req.queryParams("otsikko"));
             viestiDao.save(id, req.queryParams("viesti"));
+            keskusteluketjuDao.paivitaViestienMaara(id);
             res.redirect("/alueen_ketjut/" + req.params(":id"));
             return "ok";
         });
@@ -97,7 +98,7 @@ public class Main {
         //lisää uuden viestin, ketjun id:n mukaiseen sijaintiin
         Spark.post("/viestit/:id", (req, res) -> {
             viestiDao.save(Integer.parseInt(req.params(":id")), req.queryParams("viesti"));
-
+            keskusteluketjuDao.paivitaViestienMaara(Integer.parseInt(req.params(":id")));
             res.redirect("/viestit/" + req.params(":id"));
             return "ok";
         });

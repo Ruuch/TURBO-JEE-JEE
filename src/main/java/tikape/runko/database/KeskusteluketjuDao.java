@@ -146,4 +146,13 @@ public class KeskusteluketjuDao implements Dao<Keskusteluketju, Integer> {
         return newId;
     }
 
+    public void paivitaViestienMaara(int ketjuId) throws SQLException {
+        Connection connection = database.getConnection();
+        PreparedStatement stmt = connection.prepareStatement("UPDATE Keskusteluketju SET viestienMaara = viestienMaara+1 WHERE id = ?;");
+        stmt.setObject(1, ketjuId);
+        stmt.executeUpdate();
+        stmt.close();
+        connection.close();
+    }
+
 }
