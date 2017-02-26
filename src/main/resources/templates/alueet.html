@@ -9,12 +9,22 @@
     <body>
         <h1>Hei!</h1>
 
-        <ol>
-            <li th:each="alue: ${alueet}">
-                <span th:text="${alue.aihe}">ketjun nimi</span> <a th:href="${'/alueen_ketjut/' + alue.id}">keskustelualueelle</a>
-            </li>
-        </ol>
-        
+        <!--        <ol>
+                    <li th:each="alue: ${alueet}">
+                        <span th:text="${alue.aihe}">ketjun nimi</span> <a th:href="${'/alueen_ketjut/' + alue.id}">keskustelualueelle</a>
+                    </li>
+                </ol>-->
+        <table>
+            <tr><td><strong>Aihe</strong></td><td><strong>Viestejä yhteensä</strong></td><td><strong>Viimeisin viesti</strong></td></tr>
+
+            <tr th:each="alue: ${alueet}">
+                <td><a th:href="${'/alueen_ketjut/' + alue.id}"> <span th:text="${alue.aihe}"></span></a></td>
+                <td th:text="${alue.viestejaYhteensa}">1</td>
+                <td th:text="${alue.viimeViestinAikaleima}">1</td>
+            </tr>
+        </table>
+
+
         <form method="POST" action="/">
             otsikko:<br/>
             <input type="text" name="aihe"/><br/>

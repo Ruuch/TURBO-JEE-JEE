@@ -127,13 +127,13 @@ public class ViestiDao implements Dao<Viesti, Integer> {
         return newId;
     }
 
-    public void save(Integer ketjuId, String sisalto) throws SQLException {
+    public void save(Integer id, Integer ketjuId, String sisalto) throws SQLException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         Date date = new Date();
         String sDate = sdf.format(date);
         Connection connection = database.getConnection();
         PreparedStatement stmt = connection.prepareStatement("INSERT INTO Viesti (id, ketjuId, aikaleima, sisalto) VALUES (?, ?, ?, ?);");
-        stmt.setObject(1, generateId());
+        stmt.setObject(1, id);
         stmt.setObject(2, ketjuId);
         stmt.setObject(3, sDate);
         stmt.setObject(4, sisalto);

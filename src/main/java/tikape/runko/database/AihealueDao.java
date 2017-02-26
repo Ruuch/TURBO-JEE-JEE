@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import tikape.runko.domain.Aihealue;
+import tikape.runko.domain.Viesti;
 
 public class AihealueDao implements Dao<Aihealue, Integer> {
 
@@ -134,5 +135,15 @@ public class AihealueDao implements Dao<Aihealue, Integer> {
         connection.close();
 
         return newId;
+    }
+
+    public void paivitaViimeisinViesti(int id, String aika) throws SQLException {
+        Connection connection = database.getConnection();
+        PreparedStatement stmt = connection.prepareStatement("UPDATE Aihealue SET viimeViestinAikaleima = ? WHERE id = ?;");
+        stmt.setObject(1, aika);
+        stmt.setObject(2, id);
+        stmt.executeUpdate();
+        stmt.close();
+        connection.close();
     }
 }

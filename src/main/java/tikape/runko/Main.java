@@ -80,11 +80,13 @@ public class Main {
 
         //lisää uuden keskusteluketjun ja siihen ensimmäisen viestin
         Spark.post("/alueen_ketjut/:id", (req, res) -> {
-            int id = keskusteluketjuDao.generateId();
-            keskusteluketjuDao.save(id, Integer.parseInt(req.params(":id")),
+            int ketjuId = keskusteluketjuDao.generateId();
+            int viestiId = viestiDao.generateId();
+            keskusteluketjuDao.save(ketjuId, Integer.parseInt(req.params(":id")),
                     req.queryParams("otsikko"));
-            viestiDao.save(id, req.queryParams("viesti"));
-            keskusteluketjuDao.paivitaViestienMaara(id);
+            viestiDao.save(viestiId, ketjuId, req.queryParams("viesti"));
+            keskusteluketjuDao.paivitaViestienMaara(ketjuId);
+            aihealueDao.paivitaViimeisinViesti(viestiId, req.params(":id"));
             res.redirect("/alueen_ketjut/" + req.params(":id"));
             return "ok";
         });
@@ -101,8 +103,10 @@ public class Main {
 
         //lisää uuden viestin, ketjun id:n mukaiseen sijaintiin
         Spark.post("/viestit/:id", (req, res) -> {
-            viestiDao.save(Integer.parseInt(req.params(":id")), req.queryParams("viesti"));
+            int id = viestiDao.generateId();
+            viestiDao.save(id, Integer.parseInt(req.params(":id")), req.queryParams("viesti"));
             keskusteluketjuDao.paivitaViestienMaara(Integer.parseInt(req.params(":id")));
+            aihealueDao.paivitaViimeisinViesti(keskusteluketjuDao.findOne(Integer.parseInt(req.params(":id"))).getAihealueId(), viestiDao.findOne(id).getAikaleima());
             res.redirect("/viestit/" + req.params(":id"));
             return "ok";
         });
