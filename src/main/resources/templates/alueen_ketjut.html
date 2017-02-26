@@ -2,6 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
     <head>
+        <style>
+            body {
+                background-color: lightblue;
+            }
+            h3 {
+                color: navy;
+                margin-left: 20px;
+            }
+        </style>
         <title>Otsikko</title>
         <meta charset="utf-8" />
     </head>
@@ -9,12 +18,12 @@
     <body>
         <h3 th:text="${otsikko}"></h3>
         <table>
-            <tr><td><strong>Otsikko</strong></td><td><strong>Viestien maara</strong></td><td><strong>Viimeisin viesti</strong></td></tr>
+            <tr><td align="center" valign="center"><strong>otsikko</strong></td><td align="center" valign="center"><strong>viestien maara</strong></td><td></td></tr>
 
             <tr th:each="ketju: ${lista}">
-                <td><a th:href="${'/viestit/' + ketju.id}"> <span th:text="${ketju.otsikko}"></span></a></td>
-                <td th:text="${ketju.viestienMaara}"></td>
-                <!--<td th:text="${ketju.viimeViestinAikaleima"></td>-->
+                <td th:text="${ketju.otsikko}">1</td>
+                <td th:text="${ketju.viestienMaara}">1</td>
+                <td><a th:href="${'/viestit/' + ketju.id}">ketjuun</a></td>
 
             </tr>
         </table>
