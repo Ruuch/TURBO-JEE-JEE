@@ -9,9 +9,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.time.LocalDateTime;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import tikape.runko.domain.Keskusteluketju;
 
@@ -108,13 +108,15 @@ public class KeskusteluketjuDao implements Dao<Keskusteluketju, Integer> {
     }
 
     public void save(Integer ketjuId, Integer aihealue_id, String otsikko) throws SQLException {
-        LocalDateTime timePoint = LocalDateTime.now();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Date date = new Date();
+        String sDate = sdf.format(date);
         Connection connection = database.getConnection();
         PreparedStatement stmt = connection.prepareStatement("INSERT INTO Keskusteluketju (id, aihealue_id, viestienMaara, otsikko, aikaleima) VALUES (?, ?," + "0," + "?,?);");
         stmt.setObject(1, ketjuId);
         stmt.setObject(2, aihealue_id);
         stmt.setObject(3, otsikko);
-        stmt.setObject(4, timePoint.toString());
+        stmt.setObject(4, sDate);
         stmt.executeUpdate();
         stmt.close();
         connection.close();

@@ -1,5 +1,9 @@
 package tikape.runko;
 
+//import java.util.Calendar;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashMap;
 import spark.ModelAndView;
 import spark.Spark;
@@ -74,7 +78,7 @@ public class Main {
             return new ModelAndView(map, "alueen_ketjut");
         }, new ThymeleafTemplateEngine());
 
-        //lisää uuden keskusteluketjun, viestin lisääminen ei vielä tehty
+        //lisää uuden keskusteluketjun ja siihen ensimmäisen viestin
         Spark.post("/alueen_ketjut/:id", (req, res) -> {
             int id = keskusteluketjuDao.generateId();
             keskusteluketjuDao.save(id, Integer.parseInt(req.params(":id")),

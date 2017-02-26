@@ -6,13 +6,14 @@
 package tikape.runko.database;
 
 import java.sql.Connection;
+import java.util.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import tikape.runko.domain.Keskusteluketju;
 import tikape.runko.domain.Viesti;
 
 public class ViestiDao implements Dao<Viesti, Integer> {
@@ -127,12 +128,14 @@ public class ViestiDao implements Dao<Viesti, Integer> {
     }
 
     public void save(Integer ketjuId, String sisalto) throws SQLException {
-        LocalDateTime timePoint = LocalDateTime.now();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Date date = new Date();
+        String sDate = sdf.format(date);
         Connection connection = database.getConnection();
         PreparedStatement stmt = connection.prepareStatement("INSERT INTO Viesti (id, ketjuId, aikaleima, sisalto) VALUES (?, ?, ?, ?);");
         stmt.setObject(1, generateId());
         stmt.setObject(2, ketjuId);
-        stmt.setObject(3, timePoint.toString());
+        stmt.setObject(3, sDate);
         stmt.setObject(4, sisalto);
         stmt.executeUpdate();
         stmt.close();
