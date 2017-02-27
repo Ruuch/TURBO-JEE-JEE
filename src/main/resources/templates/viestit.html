@@ -15,10 +15,10 @@
     <body>
         <h3 th:text="${otsikko}"></h3>
         <table>
-            <tr><td><strong>lähettäjä</strong></td><td><strong>viesti</strong></td></tr>
+            <tr><td><strong>lahettaja</strong></td><td><strong>viesti</strong></td></tr>
 
             <tr th:each="viesti: ${lista}">
-                <td th:text="${viesti.id}">1</td><td th:text="${viesti.sisalto}">1</td>
+                <td th:text="${kayttaja.findOne(viesti.id).getNimi()}">1</td><td th:text="${viesti.sisalto}">1</td>
             </tr>
         </table>
         <br></br>
