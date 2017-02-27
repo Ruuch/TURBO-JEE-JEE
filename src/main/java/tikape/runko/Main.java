@@ -77,36 +77,36 @@ public class Main {
 
             map.put("otsikko", alue.getAihe());
             map.put("lista", keskusteluketjuDao.alueenKetjut(alue.getId()));
-
+            map.put("keskusteluketju", keskusteluketjuDao);
+            
             return new ModelAndView(map, "alueen_ketjut");
         }, new ThymeleafTemplateEngine());
 
         //lisää uuden keskusteluketjun ja siihen ensimmäisen viestin
         Spark.post("/alueen_ketjut/:id", (req, res) -> {
             int ketjuId = keskusteluketjuDao.generateId();
-            
+
             String nimi = req.queryParams("nimi");
             Kayttaja kayttaja = kayttajaDao.findOne(nimi);
-            
+
             //  Jos kayttajaa tällä nimellä ei ole, luodaan uusi.
             if (kayttaja == null) {
                 //  Lisättävä attribuutit
                 kayttajaDao.save(nimi);
             }
-            
+
             //  Vaihtoehtoisesti voidaan asettaa save() palauttamaan luotu kayttaja.
             nimi = req.queryParams("nimi");
             kayttaja = kayttajaDao.findOne(nimi);
-        
+
             //  Luodaan uusi viesti kayttajan idllä.
             int viestiId = kayttaja.getId();
-           
-            
+
             keskusteluketjuDao.save(ketjuId, Integer.parseInt(req.params(":id")),
                     req.queryParams("otsikko"));
             viestiDao.save(viestiId, ketjuId, req.queryParams("viesti"));
             keskusteluketjuDao.paivitaViestienMaara(ketjuId);
-            aihealueDao.paivitaViimeisinViesti(viestiId, req.params(":id"));
+            aihealueDao.paivitaViimeisinViestiAikaleima(Integer.parseInt(req.params(":id")), ketjuId);
             res.redirect("/alueen_ketjut/" + req.params(":id"));
             return "ok";
         });
@@ -115,7 +115,7 @@ public class Main {
         get("/viestit/:id", (req, res) -> {
             HashMap map = new HashMap<>();
             Keskusteluketju kk = keskusteluketjuDao.findOne(Integer.parseInt(req.params("id")));
-            map.put("kayttaja",kayttajaDao);
+            map.put("kayttaja", kayttajaDao);
             map.put("Viesti", "heipähei");
             map.put("lista", viestiDao.ketjunViestit(kk.getId()));
 
@@ -127,25 +127,25 @@ public class Main {
             //  Kayttajan tarkistaminen ja tarvittaessa uuden luominen, viesti id vaihdetaan tähän.
             String nimi = req.queryParams("nimi");
             Kayttaja kayttaja = kayttajaDao.findOne(nimi);
-            
+
             //  Jos kayttajaa tällä nimellä ei ole, luodaan uusi.
             if (kayttaja == null) {
                 //  Lisättävä attribuutit
                 kayttajaDao.save(nimi);
             }
-            
+
             //  Vaihtoehtoisesti voidaan asettaa save() palauttamaan luotu kayttaja.
             nimi = req.queryParams("nimi");
             kayttaja = kayttajaDao.findOne(nimi);
-        
+
             //  Luodaan uusi viesti kayttajan idllä.
             int id = kayttaja.getId();
             viestiDao.save(id, Integer.parseInt(req.params(":id")), req.queryParams("viesti"));
             keskusteluketjuDao.paivitaViestienMaara(Integer.parseInt(req.params(":id")));
-            aihealueDao.paivitaViimeisinViesti(keskusteluketjuDao.findOne(Integer.parseInt(req.params(":id")))
-                    .getAihealueId(), viestiDao.findOne(id).getAikaleima());
+            aihealueDao.paivitaViimeisinViestiAikaleima(keskusteluketjuDao.findOne(Integer.parseInt(req.params(":id")))
+                    .getAihealueId(), Integer.parseInt(req.params(":id")));
             res.redirect("/viestit/" + req.params(":id"));
-            return "ok"; 
+            return "ok";
         });
     }
 }

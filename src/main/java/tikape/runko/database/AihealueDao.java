@@ -93,9 +93,6 @@ public class AihealueDao implements Dao<Aihealue, Integer> {
         //vaihda nimeksi save, muuta tyyli samanlaiseksi kuin keskusteluketjuDaossa
         try (Connection connection = database.getConnection()) {
             Statement st = connection.createStatement();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-            Date date = new Date();
-            String sDate = sdf.format(date);
 
             PreparedStatement stmt = connection.prepareStatement("INSERT INTO Aihealue "
                     + "(id,aihe,viestejaYhteensa, viimeViestinAikaleima)"
@@ -103,7 +100,7 @@ public class AihealueDao implements Dao<Aihealue, Integer> {
 
             stmt.setObject(1, id);
             stmt.setObject(2, otsikko);
-            stmt.setObject(3, sDate);
+            stmt.setObject(3, "-");
 
             stmt.executeUpdate();
             stmt.close();
@@ -119,7 +116,7 @@ public class AihealueDao implements Dao<Aihealue, Integer> {
         Connection connection = database.getConnection();
         PreparedStatement stmt = connection.prepareStatement("SELECT * FROM Aihealue ORDER BY id DESC LIMIT 1");
         ResultSet rs = stmt.executeQuery();
-        if (rs.next()) {
+        if (!rs.next()) {
             return null;
         }
         Integer id = rs.getInt("id");
@@ -137,13 +134,21 @@ public class AihealueDao implements Dao<Aihealue, Integer> {
         return newId;
     }
 
-    public void paivitaViimeisinViesti(int id, String aika) throws SQLException {
+    public void paivitaViimeisinViestiAikaleima(int aihealue_id, int ketju_id) throws SQLException {
         Connection connection = database.getConnection();
-        PreparedStatement stmt = connection.prepareStatement("UPDATE Aihealue SET viimeViestinAikaleima = ? WHERE id = ?;");
-        stmt.setObject(1, aika);
-        stmt.setObject(2, id);
-        stmt.executeUpdate();
-        stmt.close();
+        PreparedStatement stmt1 = connection.prepareStatement("SELECT * FROM Viesti WHERE ketjuId = ? ORDER BY aikaleima DESC;");
+        stmt1.setObject(1, ketju_id);
+        ResultSet rs = stmt1.executeQuery();
+        String aika = "-";
+        if (rs.next()) {
+            aika = rs.getString("aikaleima");
+        }
+
+        PreparedStatement stmt2 = connection.prepareStatement("UPDATE Aihealue SET viimeViestinAikaleima = ? WHERE id = ?;");
+        stmt2.setObject(1, aika);
+        stmt2.setObject(2, aihealue_id);
+        stmt2.executeUpdate();
+        stmt2.close();
         connection.close();
     }
 }
