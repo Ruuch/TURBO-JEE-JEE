@@ -84,7 +84,24 @@ public class Main {
         //lisää uuden keskusteluketjun ja siihen ensimmäisen viestin
         Spark.post("/alueen_ketjut/:id", (req, res) -> {
             int ketjuId = keskusteluketjuDao.generateId();
-            int viestiId = viestiDao.generateId();
+            
+            String nimi = req.queryParams("nimi");
+            Kayttaja kayttaja = kayttajaDao.findOne(nimi);
+            
+            //  Jos kayttajaa tällä nimellä ei ole, luodaan uusi.
+            if (kayttaja == null) {
+                //  Lisättävä attribuutit
+                kayttajaDao.save(nimi);
+            }
+            
+            //  Vaihtoehtoisesti voidaan asettaa save() palauttamaan luotu kayttaja.
+            nimi = req.queryParams("nimi");
+            kayttaja = kayttajaDao.findOne(nimi);
+        
+            //  Luodaan uusi viesti kayttajan idllä.
+            int viestiId = kayttaja.getId();
+           
+            
             keskusteluketjuDao.save(ketjuId, Integer.parseInt(req.params(":id")),
                     req.queryParams("otsikko"));
             viestiDao.save(viestiId, ketjuId, req.queryParams("viesti"));
