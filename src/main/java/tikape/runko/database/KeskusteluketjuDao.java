@@ -52,7 +52,6 @@ public class KeskusteluketjuDao implements Dao<Keskusteluketju, Integer> {
 
     @Override
     public List<Keskusteluketju> findAll() throws SQLException {
-
         Connection connection = database.getConnection();
         PreparedStatement stmt = connection.prepareStatement("SELECT * FROM Keskusteluketju");
 
@@ -76,7 +75,6 @@ public class KeskusteluketjuDao implements Dao<Keskusteluketju, Integer> {
     }
 
     public List<Keskusteluketju> alueenKetjut(Integer aihealueId) throws SQLException {
-
         Connection connection = database.getConnection();
         PreparedStatement stmt = connection.prepareStatement("SELECT * FROM Keskusteluketju WHERE aihealue_id = ?");
         stmt.setObject(1, aihealueId);
@@ -148,13 +146,24 @@ public class KeskusteluketjuDao implements Dao<Keskusteluketju, Integer> {
         return newId;
     }
 
-    public void paivitaViestienMaara(int ketjuId) throws SQLException {
+    public int viestienMaaraKetjussa(int ketjuId) throws SQLException {
         Connection connection = database.getConnection();
-        PreparedStatement stmt = connection.prepareStatement("UPDATE Keskusteluketju SET viestienMaara = viestienMaara+1 WHERE id = ?;");
-        stmt.setObject(1, ketjuId);
-        stmt.executeUpdate();
-        stmt.close();
+        PreparedStatement stmt1 = connection.prepareStatement("SELECT *, COUNT(*) AS lkm FROM Viesti WHERE ketjuId = ?;");
+        stmt1.setObject(1, ketjuId);
+        ResultSet rs = stmt1.executeQuery();
+        boolean hasOne = rs.next();
+        if (!hasOne) {
+            return 1;
+        }
+        Integer maara = rs.getInt("lkm");
+        PreparedStatement stmt2 = connection.prepareStatement("UPDATE Keskusteluketju SET viestienMaara = ? WHERE id = ?;");
+        stmt2.setObject(1, maara);
+        stmt2.setObject(2, ketjuId);
+        stmt2.executeUpdate();
+        stmt2.close();
         connection.close();
+
+        return maara;
     }
 
     public String getViimeisimmanViestinAikaleima(int ketjuId) throws SQLException {

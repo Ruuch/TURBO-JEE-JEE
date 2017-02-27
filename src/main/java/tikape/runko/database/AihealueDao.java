@@ -151,4 +151,24 @@ public class AihealueDao implements Dao<Aihealue, Integer> {
         stmt2.close();
         connection.close();
     }
+
+    public int viestienMaaraAlueella(int AiheId) throws SQLException {
+        Connection connection = database.getConnection();
+        PreparedStatement stmt1 = connection.prepareStatement("SELECT Viesti.id, COUNT(Viesti.id) AS lkm FROM Viesti, Keskusteluketju, Aihealue WHERE Aihealue.id = ? AND Aihealue.id = Keskusteluketju.aihealue_id AND Keskusteluketju.id = Viesti.ketjuId;");
+        stmt1.setObject(1, AiheId);
+        ResultSet rs = stmt1.executeQuery();
+        boolean hasOne = rs.next();
+        if (!hasOne) {
+            return 1;
+        }
+        Integer maara = rs.getInt("lkm");
+        PreparedStatement stmt2 = connection.prepareStatement("UPDATE Aihealue SET viestejaYhteensa = ? WHERE id = ?;");
+        stmt2.setObject(1, maara);
+        stmt2.setObject(2, AiheId);
+        stmt2.executeUpdate();
+        stmt2.close();
+        connection.close();
+
+        return maara;
+    }
 }

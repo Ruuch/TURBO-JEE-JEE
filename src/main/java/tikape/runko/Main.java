@@ -34,6 +34,7 @@ public class Main {
             HashMap map = new HashMap<>();
             map.put("otsikko", "Alueet");
             map.put("alueet", aihealueDao.findAll());
+            map.put("aihealue", aihealueDao);
 
             return new ModelAndView(map, "alueet");
         }, new ThymeleafTemplateEngine());
@@ -78,7 +79,7 @@ public class Main {
             map.put("otsikko", alue.getAihe());
             map.put("lista", keskusteluketjuDao.alueenKetjut(alue.getId()));
             map.put("keskusteluketju", keskusteluketjuDao);
-            
+
             return new ModelAndView(map, "alueen_ketjut");
         }, new ThymeleafTemplateEngine());
 
@@ -105,7 +106,7 @@ public class Main {
             keskusteluketjuDao.save(ketjuId, Integer.parseInt(req.params(":id")),
                     req.queryParams("otsikko"));
             viestiDao.save(viestiId, ketjuId, req.queryParams("viesti"));
-            keskusteluketjuDao.paivitaViestienMaara(ketjuId);
+            keskusteluketjuDao.viestienMaaraKetjussa(ketjuId);
             aihealueDao.paivitaViimeisinViestiAikaleima(Integer.parseInt(req.params(":id")), ketjuId);
             res.redirect("/alueen_ketjut/" + req.params(":id"));
             return "ok";
@@ -141,7 +142,7 @@ public class Main {
             //  Luodaan uusi viesti kayttajan idllä.
             int id = kayttaja.getId();
             viestiDao.save(id, Integer.parseInt(req.params(":id")), req.queryParams("viesti"));
-            keskusteluketjuDao.paivitaViestienMaara(Integer.parseInt(req.params(":id")));
+            keskusteluketjuDao.viestienMaaraKetjussa(Integer.parseInt(req.params(":id")));
             aihealueDao.paivitaViimeisinViestiAikaleima(keskusteluketjuDao.findOne(Integer.parseInt(req.params(":id")))
                     .getAihealueId(), Integer.parseInt(req.params(":id")));
             res.redirect("/viestit/" + req.params(":id"));

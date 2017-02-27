@@ -28,7 +28,7 @@
 
             <tr th:each="alue: ${alueet}">
                 <td><a th:href="${'/alueen_ketjut/' + alue.id}"> <span th:text="${alue.aihe}"></span></a></td>
-                <td th:text="${alue.viestejaYhteensa}">1</td>
+                <td th:text="${aihealue.viestienMaaraAlueella(alue.id)}">1</td>
                 <td th:text="${alue.viimeViestinAikaleima}">1</td>
             </tr>
         </table>
