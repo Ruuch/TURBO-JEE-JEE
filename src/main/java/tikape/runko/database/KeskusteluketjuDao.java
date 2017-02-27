@@ -129,7 +129,7 @@ public class KeskusteluketjuDao implements Dao<Keskusteluketju, Integer> {
         ResultSet rs = stmt.executeQuery();
         boolean hasOne = rs.next();
         if (!hasOne) {
-            return null;
+            return 1;
         }
 
         Integer id = rs.getInt("id");
