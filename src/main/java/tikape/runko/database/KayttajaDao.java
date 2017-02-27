@@ -127,7 +127,7 @@ public class KayttajaDao implements Dao<Kayttaja, Integer> {
         PreparedStatement stmt = connection.prepareStatement("SELECT * FROM Kayttaja ORDER BY id DESC LIMIT 1");
         ResultSet rs = stmt.executeQuery();
         if (!rs.next()) {
-            return null;
+            return 1;
         }
         Integer id = rs.getInt("id");
         String nimi = rs.getString("nimi");

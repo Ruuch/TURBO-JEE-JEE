@@ -110,7 +110,7 @@ public class ViestiDao implements Dao<Viesti, Integer> {
         PreparedStatement stmt = connection.prepareStatement("SELECT * FROM Viesti ORDER BY id DESC LIMIT 1");
         ResultSet rs = stmt.executeQuery();
         if (!rs.next()) {
-            return null;
+            return 1;
         }
         Integer id = rs.getInt("id");
         Integer ketjuId = rs.getInt("ketjuId");
