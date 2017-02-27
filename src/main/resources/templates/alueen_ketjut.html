@@ -23,7 +23,7 @@
             <tr th:each="ketju: ${lista}">
                 <td><a th:href="${'/viestit/' + ketju.id}"> <span th:text="${ketju.otsikko}"></span></a></td>
                 <td th:text="${ketju.viestienMaara}">1</td>
-                <!--<td th:text="${ketju.viimeViestinAikaleima}">1</td>-->
+                <td th:text="${ketju.viimeViestinAikaleima}">1</td>
             </tr>
         </table>
 
