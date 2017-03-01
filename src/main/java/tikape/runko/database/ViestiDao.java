@@ -81,7 +81,7 @@ public class ViestiDao implements Dao<Viesti, Integer> {
 
     public List<Viesti> ketjunViestit(Integer ketju_id) throws SQLException {
         Connection connection = database.getConnection();
-        PreparedStatement stmt = connection.prepareStatement("SELECT * FROM Viesti WHERE ketjuId = ?");
+        PreparedStatement stmt = connection.prepareStatement("SELECT * FROM Viesti WHERE ketjuId = ? ORDER BY Viesti.aikaleima DESC");
         stmt.setObject(1, ketju_id);
 
         ResultSet rs = stmt.executeQuery();
