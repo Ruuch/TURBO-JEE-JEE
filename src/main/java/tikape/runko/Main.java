@@ -3,8 +3,10 @@ package tikape.runko;
 //import java.util.Calendar;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import spark.ModelAndView;
 import spark.Spark;
 import static spark.Spark.*;
@@ -17,6 +19,7 @@ import tikape.runko.database.KayttajaDao;
 import tikape.runko.domain.Aihealue;
 import tikape.runko.domain.Kayttaja;
 import tikape.runko.domain.Keskusteluketju;
+import tikape.runko.domain.Viesti;
 
 public class Main {
 
@@ -111,20 +114,58 @@ public class Main {
             res.redirect("/alueen_ketjut/" + req.params(":id"));
             return "ok";
         });
+        
+        //  Väliäaikaisratkaisu uudelleenohjaamiselle.
+        get("/viestit/:id" ,(req,res) -> {
+            res.redirect("/viestit/" + req.params(":id") + "/1");
+            return "ok";
+        });
 
         //  Tulostaa kaikki tietyn ketjun viestit tietokannasta.
-        get("/viestit/:id", (req, res) -> {
+        get("/viestit/:id/:N", (req, res) -> {
             HashMap map = new HashMap<>();
+            int sivu = Integer.parseInt(req.params(":N"));
+            int viestejasivulla = 10;
+            
             Keskusteluketju kk = keskusteluketjuDao.findOne(Integer.parseInt(req.params("id")));
             map.put("kayttaja", kayttajaDao);
             map.put("Viesti", "heipähei");
-            map.put("lista", viestiDao.ketjunViestit(kk.getId()));
+            
+            //  Järjestetään viestilista ajan mukaan ja palautetaan halutut viestit sivulle.
+            List<Viesti> lista1 = viestiDao.ketjunViestit(kk.getId());
+            List<Viesti> lista2 = new ArrayList<>();
+            int i = 0;
+            while (i < viestejasivulla) {
+                if (lista1.size() > 10*sivu - 10 + i) {
+                    lista2.add(lista1.get(10*sivu - 10 + i));
+                    i++;                    
+                } else { break; }
+            }
+            
+            
+            map.put("lista", lista2);
+            map.put("ketju", kk);
+            
+            //  Annetaan sivulle tieto seuraavan ja edellisen sivun numeroista.
+            if (sivu == 1 && sivu > Math.ceil(lista1.size()/viestejasivulla)) {
+                map.put("seuraavasivu",sivu);
+                map.put("edellinensivu",sivu);
+            } else if (sivu == 1) {
+                map.put("seuraavasivu",sivu+1);
+                map.put("edellinensivu",sivu);
+            } else if (sivu >= Math.ceil(lista1.size()/viestejasivulla)) {
+                map.put("seuraavasivu",sivu);
+                map.put("edellinensivu",sivu-1);
+            } else {
+                map.put("seuraavasivu",sivu+1);
+                map.put("edellinensivu",sivu-1);
+            }
 
             return new ModelAndView(map, "viestit");
         }, new ThymeleafTemplateEngine());
 
         //  lisää uuden viestin, ketjun id:n mukaiseen sijaintiin
-        Spark.post("/viestit/:id", (req, res) -> {
+        Spark.post("/viestit/:id/:N", (req, res) -> {
             //  Kayttajan tarkistaminen ja tarvittaessa uuden luominen, viesti id vaihdetaan tähän.
             String nimi = req.queryParams("nimi");
             Kayttaja kayttaja = kayttajaDao.findOne(nimi);
@@ -145,7 +186,7 @@ public class Main {
             keskusteluketjuDao.viestienMaaraKetjussa(Integer.parseInt(req.params(":id")));
             aihealueDao.paivitaViimeisinViestiAikaleima(keskusteluketjuDao.findOne(Integer.parseInt(req.params(":id")))
                     .getAihealueId(), Integer.parseInt(req.params(":id")));
-            res.redirect("/viestit/" + req.params(":id"));
+            res.redirect("/viestit/" + req.params(":id") + "/" + req.params(":N"));
             return "ok";
         });
     }
