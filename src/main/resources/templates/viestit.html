@@ -29,6 +29,9 @@
             Viesti:<br></br><textarea name="viesti" id="textarea" cols="45" rows="5"></textarea>
             <input type="submit" name="button" value="Send" />
         </form>
+        
+        <a th:href="${'/viestit/' + ketju.getId() + '/' + seuraavasivu}">Seuraava sivu</a>
+        <a th:href="${'/viestit/' + ketju.getId() + '/' + edellinensivu}">Edellinen sivu</a>
 
     </body>
 </html>
