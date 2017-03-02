@@ -98,6 +98,8 @@ public class Main {
             map.put("otsikko", aa.getAihe());
             map.put("lista", keskusteluketjuDao.alueenKetjut(aa.getId()));
             map.put("keskusteluketju", keskusteluketjuDao);
+            map.put("kayttaja", kayttajaDao);
+            map.put("Viesti", "heipähei");
             
             //  Järjestetään keskusteluketjut ajan mukaan ja palautetaan halutut ketjut sivulle.
             List<Keskusteluketju> lista1 = keskusteluketjuDao.alueenKetjut(aa.getId());
