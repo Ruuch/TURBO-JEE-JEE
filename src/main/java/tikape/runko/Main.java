@@ -1,10 +1,6 @@
 package tikape.runko;
 
-//import java.util.Calendar;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import spark.ModelAndView;
@@ -47,13 +43,12 @@ public class Main {
         post("/", (req, res) -> {
             String otsikko = req.queryParams("aihe");
             aihealueDao.save(otsikko);
-
             HashMap map = new HashMap<>();
             map.put("otsikko", "Alueet");
             map.put("alueet", aihealueDao.findAll());
-
-            return new ModelAndView(map, "alueet");
-        }, new ThymeleafTemplateEngine());
+            res.redirect("/");
+            return "ok";
+        });
 
         //  Listaa kaikki ketjut, sivu sisältää linkit /keskusteluketjut/:id
         get("/keskusteluketjut", (req, res) -> {

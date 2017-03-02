@@ -5,12 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import tikape.runko.domain.Aihealue;
-import tikape.runko.domain.Viesti;
 
 public class AihealueDao implements Dao<Aihealue, Integer> {
 
@@ -50,7 +47,7 @@ public class AihealueDao implements Dao<Aihealue, Integer> {
     public List<Aihealue> findAll() throws SQLException {
 
         Connection connection = database.getConnection();
-        PreparedStatement stmt = connection.prepareStatement("SELECT * FROM Aihealue");
+        PreparedStatement stmt = connection.prepareStatement("SELECT * FROM Aihealue ORDER BY aihe");
 
         ResultSet rs = stmt.executeQuery();
         List<Aihealue> aihealueet = new ArrayList<>();
@@ -157,11 +154,10 @@ public class AihealueDao implements Dao<Aihealue, Integer> {
         PreparedStatement stmt1 = connection.prepareStatement("SELECT Viesti.id, COUNT(Viesti.id) AS lkm FROM Viesti, Keskusteluketju, Aihealue WHERE Aihealue.id = ? AND Aihealue.id = Keskusteluketju.aihealue_id AND Keskusteluketju.id = Viesti.ketjuId;");
         stmt1.setObject(1, AiheId);
         ResultSet rs = stmt1.executeQuery();
-        boolean hasOne = rs.next();
-        if (!hasOne) {
-            return 1;
+        int maara = 0;
+        if (rs.next()) {
+            maara = rs.getInt("lkm");
         }
-        Integer maara = rs.getInt("lkm");
         PreparedStatement stmt2 = connection.prepareStatement("UPDATE Aihealue SET viestejaYhteensa = ? WHERE id = ?;");
         stmt2.setObject(1, maara);
         stmt2.setObject(2, AiheId);
