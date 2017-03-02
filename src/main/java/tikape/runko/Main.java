@@ -84,7 +84,6 @@ public class Main {
         
         //  Väliäaikaisratkaisu uudelleenohjaamiselle.
         get("/alueen_ketjut/:id" ,(req,res) -> {
-            System.out.println("moi");
             res.redirect("/alueen_ketjut/" + req.params(":id") + "/1");
             return "ok";
         });
@@ -96,7 +95,6 @@ public class Main {
             int keskustelujaSivulla = 10;
             
             Aihealue aa = aihealueDao.findOne(Integer.parseInt(req.params("id")));
-            System.out.println(aa.getId() + "idjfiosdjfiosdj");
             map.put("otsikko", aa.getAihe());
             map.put("lista", keskusteluketjuDao.alueenKetjut(aa.getId()));
             map.put("keskusteluketju", keskusteluketjuDao);
@@ -159,7 +157,7 @@ public class Main {
             viestiDao.save(viestiId, ketjuId, req.queryParams("viesti"));
             keskusteluketjuDao.viestienMaaraKetjussa(ketjuId);
             aihealueDao.paivitaViimeisinViestiAikaleima(Integer.parseInt(req.params(":id")), ketjuId);
-            res.redirect("/alueen_ketjut/" + req.params(":id") + req.params(":N"));
+            res.redirect("/alueen_ketjut/" + req.params(":id") + "/" + req.params(":N"));
             return "ok";
         });
         
