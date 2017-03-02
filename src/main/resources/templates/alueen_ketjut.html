@@ -37,6 +37,9 @@
             <textarea name="viesti" id="textarea" cols="45" rows="5"></textarea>
             <input type="submit" name="button" value="Send" />
         </form>
+        
+        <a th:href="${'/alueen_ketjut/' + aihealue.getId() + '/' + seuraavasivu}">Seuraava sivu</a>
+        <a th:href="${'/alueen_ketjut/' + aihealue.getId() + '/' + edellinensivu}">Edellinen sivu</a>
 
     </body>
 </html>

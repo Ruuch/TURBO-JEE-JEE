@@ -76,7 +76,7 @@ public class KeskusteluketjuDao implements Dao<Keskusteluketju, Integer> {
 
     public List<Keskusteluketju> alueenKetjut(Integer aihealueId) throws SQLException {
         Connection connection = database.getConnection();
-        PreparedStatement stmt = connection.prepareStatement("SELECT * FROM Keskusteluketju WHERE aihealue_id = ?");
+        PreparedStatement stmt = connection.prepareStatement("SELECT * FROM Keskusteluketju WHERE aihealue_id = ? ORDER BY Keskusteluketju.aikaleima DESC");
         stmt.setObject(1, aihealueId);
 
         ResultSet rs = stmt.executeQuery();
