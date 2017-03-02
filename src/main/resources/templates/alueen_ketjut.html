@@ -10,6 +10,19 @@
                 color: navy;
                 margin-left: 20px;
             }
+            table, th, td {
+                border: 1px solid black;
+                border-collapse: collapse;
+            }
+
+            th, td {
+                padding: 5px;
+                text-align: center;
+            }
+            table {
+                background-color:lightcyan;
+                width: 60%;  
+            }
         </style>
         <title>Otsikko</title>
         <meta charset="utf-8" />
@@ -37,7 +50,7 @@
             <textarea name="viesti" id="textarea" cols="45" rows="5"></textarea>
             <input type="submit" name="button" value="Send" />
         </form>
-        
+
         <a th:href="${'/alueen_ketjut/' + aihealue.getId() + '/' + seuraavasivu}">Seuraava sivu</a>
         <a th:href="${'/alueen_ketjut/' + aihealue.getId() + '/' + edellinensivu}">Edellinen sivu</a>
 
