@@ -42,10 +42,7 @@ public class Main {
         //  nimen ja luo uuden alueen. Tämän jälkeen palauttaa etusivun uusilla alueilla.
         post("/", (req, res) -> {
             String otsikko = req.queryParams("aihe");
-                  System.out.println("Aihealue talletettamista ennen AAAAAAAAAAAAAAA");
             aihealueDao.save(otsikko);
-             System.out.println("Aihealue talletettu AAAAAAAAAAAAAAA");
-
             HashMap map = new HashMap<>();
             map.put("otsikko", "Alueet");
             map.put("alueet", aihealueDao.findAll());
