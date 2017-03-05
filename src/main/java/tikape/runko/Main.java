@@ -20,13 +20,20 @@ import tikape.runko.domain.Viesti;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        
+
         // asetetaan portti jos heroku antaa PORT-ympäristömuuttujan
         if (System.getenv("PORT") != null) {
             port(Integer.valueOf(System.getenv("PORT")));
         }
-        
-        Database database = new Database("jdbc:sqlite:database");
+
+        // käytetään oletuksena paikallista sqlite-tietokantaa
+        String jdbcOsoite = "jdbc:sqlite:kanta.db";
+        // jos heroku antaa käyttöömme tietokantaosoitteen, otetaan se käyttöön
+        if (System.getenv("DATABASE_URL") != null) {
+            jdbcOsoite = System.getenv("DATABASE_URL");
+        }
+
+        Database db = new Database(jdbcOsoite);
 //        database.init();
 
         ViestiDao viestiDao = new ViestiDao(database);
@@ -73,7 +80,7 @@ public class Main {
 
             return new ModelAndView(map, "opiskelija");
         }, new ThymeleafTemplateEngine());
-        
+
         // ----Vanha versio----
         //  Tulostetaan osoitteesta /alue?ID=i kaikki kyseisien id:n alueen
         //  ketjut.
@@ -87,9 +94,8 @@ public class Main {
 //            
 //            return new ModelAndView(map, "alueen_ketjut");
 //        }, new ThymeleafTemplateEngine());
-        
         //  Väliäaikaisratkaisu uudelleenohjaamiselle.
-        get("/alueen_ketjut/:id" ,(req,res) -> {
+        get("/alueen_ketjut/:id", (req, res) -> {
             res.redirect("/alueen_ketjut/" + req.params(":id") + "/1");
             return "ok";
         });
@@ -99,42 +105,43 @@ public class Main {
             HashMap map = new HashMap<>();
             int sivu = Integer.parseInt(req.params(":N"));
             int keskustelujaSivulla = 10;
-            
+
             Aihealue aa = aihealueDao.findOne(Integer.parseInt(req.params("id")));
             map.put("otsikko", aa.getAihe());
             map.put("lista", keskusteluketjuDao.alueenKetjut(aa.getId()));
             map.put("keskusteluketju", keskusteluketjuDao);
             map.put("kayttaja", kayttajaDao);
             map.put("Viesti", "heipähei");
-            
+
             //  Järjestetään keskusteluketjut ajan mukaan ja palautetaan halutut ketjut sivulle.
             List<Keskusteluketju> lista1 = keskusteluketjuDao.alueenKetjut(aa.getId());
             List<Keskusteluketju> lista2 = new ArrayList<>();
             int i = 0;
             while (i < keskustelujaSivulla) {
-                if (lista1.size() > 10*sivu - 10 + i) {
-                    lista2.add(lista1.get(10*sivu - 10 + i));
-                    i++;                    
-                } else { break; }
+                if (lista1.size() > 10 * sivu - 10 + i) {
+                    lista2.add(lista1.get(10 * sivu - 10 + i));
+                    i++;
+                } else {
+                    break;
+                }
             }
-            
-            
+
             map.put("lista", lista2);
             map.put("aihealue", aa);
-            
+
             //  Annetaan sivulle tieto seuraavan ja edellisen sivun numeroista.
-            if (sivu == 1 && sivu > Math.ceil(lista1.size()/keskustelujaSivulla)) {
-                map.put("seuraavasivu",sivu);
-                map.put("edellinensivu",sivu);
+            if (sivu == 1 && sivu > Math.ceil(lista1.size() / keskustelujaSivulla)) {
+                map.put("seuraavasivu", sivu);
+                map.put("edellinensivu", sivu);
             } else if (sivu == 1) {
-                map.put("seuraavasivu",sivu+1);
-                map.put("edellinensivu",sivu);
-            } else if (sivu >= Math.ceil(lista1.size()/keskustelujaSivulla)) {
-                map.put("seuraavasivu",sivu);
-                map.put("edellinensivu",sivu-1);
+                map.put("seuraavasivu", sivu + 1);
+                map.put("edellinensivu", sivu);
+            } else if (sivu >= Math.ceil(lista1.size() / keskustelujaSivulla)) {
+                map.put("seuraavasivu", sivu);
+                map.put("edellinensivu", sivu - 1);
             } else {
-                map.put("seuraavasivu",sivu+1);
-                map.put("edellinensivu",sivu-1);
+                map.put("seuraavasivu", sivu + 1);
+                map.put("edellinensivu", sivu - 1);
             }
 
             return new ModelAndView(map, "alueen_ketjut");
@@ -168,9 +175,9 @@ public class Main {
             res.redirect("/alueen_ketjut/" + req.params(":id") + "/" + req.params(":N"));
             return "ok";
         });
-        
+
         //  Väliäaikaisratkaisu uudelleenohjaamiselle.
-        get("/viestit/:id" ,(req,res) -> {
+        get("/viestit/:id", (req, res) -> {
             res.redirect("/viestit/" + req.params(":id") + "/1");
             return "ok";
         });
@@ -180,39 +187,40 @@ public class Main {
             HashMap map = new HashMap<>();
             int sivu = Integer.parseInt(req.params(":N"));
             int viestejasivulla = 10;
-            
+
             Keskusteluketju kk = keskusteluketjuDao.findOne(Integer.parseInt(req.params("id")));
             map.put("kayttaja", kayttajaDao);
             map.put("Viesti", "heipähei");
-            
+
             //  Järjestetään viestilista ajan mukaan ja palautetaan halutut viestit sivulle.
             List<Viesti> lista1 = viestiDao.ketjunViestit(kk.getId());
             List<Viesti> lista2 = new ArrayList<>();
             int i = 0;
             while (i < viestejasivulla) {
-                if (lista1.size() > 10*sivu - 10 + i) {
-                    lista2.add(lista1.get(10*sivu - 10 + i));
-                    i++;                    
-                } else { break; }
+                if (lista1.size() > 10 * sivu - 10 + i) {
+                    lista2.add(lista1.get(10 * sivu - 10 + i));
+                    i++;
+                } else {
+                    break;
+                }
             }
-            
-            
+
             map.put("lista", lista2);
             map.put("ketju", kk);
-            
+
             //  Annetaan sivulle tieto seuraavan ja edellisen sivun numeroista.
-            if (sivu == 1 && sivu > Math.ceil(lista1.size()/viestejasivulla)) {
-                map.put("seuraavasivu",sivu);
-                map.put("edellinensivu",sivu);
+            if (sivu == 1 && sivu > Math.ceil(lista1.size() / viestejasivulla)) {
+                map.put("seuraavasivu", sivu);
+                map.put("edellinensivu", sivu);
             } else if (sivu == 1) {
-                map.put("seuraavasivu",sivu+1);
-                map.put("edellinensivu",sivu);
-            } else if (sivu >= Math.ceil(lista1.size()/viestejasivulla)) {
-                map.put("seuraavasivu",sivu);
-                map.put("edellinensivu",sivu-1);
+                map.put("seuraavasivu", sivu + 1);
+                map.put("edellinensivu", sivu);
+            } else if (sivu >= Math.ceil(lista1.size() / viestejasivulla)) {
+                map.put("seuraavasivu", sivu);
+                map.put("edellinensivu", sivu - 1);
             } else {
-                map.put("seuraavasivu",sivu+1);
-                map.put("edellinensivu",sivu-1);
+                map.put("seuraavasivu", sivu + 1);
+                map.put("edellinensivu", sivu - 1);
             }
 
             return new ModelAndView(map, "viestit");
