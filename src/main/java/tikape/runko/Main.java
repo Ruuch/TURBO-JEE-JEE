@@ -33,7 +33,7 @@ public class Main {
             jdbcOsoite = System.getenv("DATABASE_URL");
         }
 
-        Database db = new Database(jdbcOsoite);
+        Database database = new Database(jdbcOsoite);
 //        database.init();
 
         ViestiDao viestiDao = new ViestiDao(database);
